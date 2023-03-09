@@ -62,7 +62,7 @@ Level3: # Options for WEIS fidelity level 3 = nonlinear time domain
     ServoDyn:
         Ptch_Cntrl: 1
         AfCmode: 5
-
+    
     xfoil:
         path: /home/mertzb/Xfoil/bin/xfoil  # Will need to set this to the user's specific path to xfoil
 
