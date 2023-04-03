@@ -53,6 +53,7 @@ SUBROUTINE WriteRestartFile(LocalVar, CntrPar, ErrVar, objInst, RootName, size_a
         WRITE( Un, IOSTAT=ErrStat) LocalVar%BlPitch(1)
         WRITE( Un, IOSTAT=ErrStat) LocalVar%BlPitch(2)
         WRITE( Un, IOSTAT=ErrStat) LocalVar%BlPitch(3)
+        WRITE( Un, IOSTAT=ErrStat) LocalVar%BlPitchCMeas
         WRITE( Un, IOSTAT=ErrStat) LocalVar%Azimuth
         WRITE( Un, IOSTAT=ErrStat) LocalVar%NumBl
         WRITE( Un, IOSTAT=ErrStat) LocalVar%FA_Acc
@@ -93,6 +94,7 @@ SUBROUTINE WriteRestartFile(LocalVar, CntrPar, ErrVar, objInst, RootName, size_a
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_KI(2)
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_KP(1)
         WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_KP(2)
+        WRITE( Un, IOSTAT=ErrStat) LocalVar%IPC_IntSat
         WRITE( Un, IOSTAT=ErrStat) LocalVar%PC_State
         WRITE( Un, IOSTAT=ErrStat) LocalVar%PitCom(1)
         WRITE( Un, IOSTAT=ErrStat) LocalVar%PitCom(2)
@@ -309,6 +311,7 @@ SUBROUTINE ReadRestartFile(avrSWAP, LocalVar, CntrPar, objInst, PerfData, RootNa
         READ( Un, IOSTAT=ErrStat) LocalVar%BlPitch(1)
         READ( Un, IOSTAT=ErrStat) LocalVar%BlPitch(2)
         READ( Un, IOSTAT=ErrStat) LocalVar%BlPitch(3)
+        READ( Un, IOSTAT=ErrStat) LocalVar%BlPitchCMeas
         READ( Un, IOSTAT=ErrStat) LocalVar%Azimuth
         READ( Un, IOSTAT=ErrStat) LocalVar%NumBl
         READ( Un, IOSTAT=ErrStat) LocalVar%FA_Acc
@@ -349,6 +352,7 @@ SUBROUTINE ReadRestartFile(avrSWAP, LocalVar, CntrPar, objInst, PerfData, RootNa
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_KI(2)
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_KP(1)
         READ( Un, IOSTAT=ErrStat) LocalVar%IPC_KP(2)
+        READ( Un, IOSTAT=ErrStat) LocalVar%IPC_IntSat
         READ( Un, IOSTAT=ErrStat) LocalVar%PC_State
         READ( Un, IOSTAT=ErrStat) LocalVar%PitCom(1)
         READ( Un, IOSTAT=ErrStat) LocalVar%PitCom(2)

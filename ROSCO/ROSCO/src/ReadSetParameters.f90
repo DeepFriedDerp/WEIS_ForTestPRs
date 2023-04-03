@@ -25,7 +25,7 @@ MODULE ReadSetParameters
 CONTAINS
  ! -----------------------------------------------------------------------------------
     ! Read avrSWAP array passed from ServoDyn
-    SUBROUTINE ReadAvrSWAP(avrSWAP, LocalVar)
+    SUBROUTINE ReadAvrSWAP(avrSWAP, LocalVar, CntrPar)
         USE ROSCO_Types, ONLY : LocalVariables, ZMQ_Variables
 
         REAL(ReKi), INTENT(INOUT) :: avrSWAP(*)   ! The swap array, used to pass data to, and receive data from, the DLL controller.
@@ -86,10 +86,22 @@ CONTAINS
             LocalVar%BlPitch(2) = avrSWAP(33)
             LocalVar%BlPitch(3) = avrSWAP(34)
         ELSE
-            LocalVar%BlPitch(1) = LocalVar%PitCom(1)
-            LocalVar%BlPitch(2) = LocalVar%PitCom(2)
-            LocalVar%BlPitch(3) = LocalVar%PitCom(3)
+            
+            ! Subtract pitch actuator fault for blade K - This in a sense would make the controller blind to the pitch fault
+            IF (CntrPar%PF_Mode == 1) THEN
+                DO K = 1, LocalVar%NumBl
+                    ! This assumes that the pitch actuator fault is hardware fault
+                    LocalVar%BlPitch(K) = LocalVar%PitComAct(K) - CntrPar%PF_Offsets(K) ! why is PitCom used and not PitComAct??
+                END DO
+            ELSE
+                LocalVar%BlPitch(1) = LocalVar%PitComAct(1)
+                LocalVar%BlPitch(2) = LocalVar%PitComAct(2)
+                LocalVar%BlPitch(3) = LocalVar%PitComAct(3)     
+            END IF
+
         ENDIF
+
+        LocalVar%BlPitchCMeas = (1 / REAL(LocalVar%NumBl)) * (LocalVar%BlPitch(1) + LocalVar%BlPitch(2) + LocalVar%BlPitch(3)) 
 
         IF (LocalVar%iStatus == 0) THEN
             LocalVar%restart = .True.
@@ -366,7 +378,7 @@ CONTAINS
         CALL ParseInput(FileLines,  'F_YawErr',             CntrPar%F_YawErr,               accINFILE(1), ErrVar, CntrPar%Y_ControlMode == 0, UnEc)
         CALL ParseAry(  FileLines,  'F_FlCornerFreq',       CntrPar%F_FlCornerFreq,     2,  accINFILE(1), ErrVar, CntrPar%FL_Mode == 0, UnEc)
         CALL ParseInput(FileLines,  'F_FlHighPassFreq',     CntrPar%F_FlHighPassFreq,       accINFILE(1), ErrVar, CntrPar%FL_Mode == 0, UnEc)
-        CALL ParseAry(  FileLines,  'F_FlpCornerFreq',      CntrPar%F_FlpCornerFreq,    2,  accINFILE(1), ErrVar, CntrPar%Flp_Mode == 0, UnEc)
+        CALL ParseAry(  FileLines,  'F_DACCornerFreq',      CntrPar%F_DACCornerFreq,    2,  accINFILE(1), ErrVar, CntrPar%DAC_Mode == 0, UnEc)
         IF (ErrVar%aviFAIL < 0) RETURN
 
         !----------- BLADE PITCH CONTROLLER CONSTANTS -----------
@@ -864,6 +876,11 @@ CONTAINS
             ErrVar%ErrMsg  = 'Corner frequency of IPC actuator model must be positive, or set to 0 to disable.'
         ENDIF
 
+        IF (CntrPar%IPC_SatMode < 0 .OR. CntrPar%IPC_SatMode > 3)  THEN
+            ErrVar%aviFAIL = -1
+            ErrVar%ErrMsg  = 'IPC_SatMode must be 0, 1, 2, or 3.'
+        ENDIF
+
         IF (CntrPar%IPC_KI(1) < 0.0)  THEN
             ErrVar%aviFAIL = -1
             ErrVar%ErrMsg  = 'IPC_KI(1) must be zero or greater than zero.'
@@ -1121,6 +1138,12 @@ CONTAINS
         IF (NINT(avrSWAP(28)) == 0 .AND. ((CntrPar%IPC_ControlMode > 0) .OR. (CntrPar%Y_ControlMode > 1))) THEN
             ErrVar%aviFAIL = -1
             ErrVar%ErrMsg  = 'IPC enabled, but Ptch_Cntrl in ServoDyn has a value of 0. Set it to 1.'
+        ENDIF
+
+        ! PF_Mode = 1
+        IF (NINT(avrSWAP(28)) == 0 .AND. (CntrPar%PF_Mode == 1)) THEN
+            ErrVar%aviFAIL = -1
+            ErrVar%ErrMsg  = 'Pitch offset fault enabled (PF_Mode = 1), but Ptch_Cntrl in ServoDyn has a value of 0. Set it to 1 for individual pitch control.'
         ENDIF
 
         ! DT

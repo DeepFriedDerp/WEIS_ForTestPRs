@@ -101,7 +101,7 @@ ControlParameters:
     F_YawErr:
       <<: *real
       description: Corner low pass filter corner frequency for yaw controller [rad/s].
-    DACCornerFreq:
+    F_DACCornerFreq:
       <<: *real
       description: Corner frequency (-3dB point) in the second order low pass filter of the blade root bending moment for DAC control [rad/s].
       allocatable: True

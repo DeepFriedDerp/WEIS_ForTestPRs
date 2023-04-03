@@ -663,7 +663,7 @@ These are pass-through parameters for the DISCON.IN file.  Use with caution.
     Natural frequency of first-order high-pass filter for nacelle
     fore-aft motion
 
-:code:`F_FlpCornerFreq` : Array of Floats
+:code:`F_DACCornerFreq` : Array of Floats
     Corner frequency and damping in the second order low pass filter
     of the blade root bending moment for flap control
 

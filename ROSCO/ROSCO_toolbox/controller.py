@@ -64,6 +64,7 @@ class Controller():
         self.TD_Mode            = controller_params['TD_Mode']
         self.DAC_Mode           = controller_params['DAC_Mode']
         self.PA_Mode           = controller_params['PA_Mode']
+        self.PF_Mode           = controller_params['PF_Mode']
         self.Ext_Mode           = controller_params['Ext_Mode']
         self.ZMQ_Mode           = controller_params['ZMQ_Mode']
         self.CC_Mode            = controller_params['CC_Mode']
