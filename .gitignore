@@ -23,8 +23,10 @@ develop-eggs
 .installed.cfg
 
 # Output files
+dac_outputs/
 outputs/
 *.out
+*.bl
 
 # Sphinx
 _build
