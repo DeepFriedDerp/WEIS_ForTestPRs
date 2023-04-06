@@ -24,7 +24,9 @@ develop-eggs
 
 # Output files
 outputs/
+dac_outputs/
 *.out
+*.bl
 
 # Sphinx
 _build
